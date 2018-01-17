@@ -63,7 +63,7 @@ document.getElementById('printTransferenciaBtn').addEventListener('click', print
 window.addEventListener("message", function(event) {
     // only listen to autopac messages with data
     let data = event.data;
-    if (data.from && data.from != "autopac" && data.message) 
+    if (data.from && data.from != "autopac" && !data.message) 
         return;
     switch (data.message) {
         case "transferenciaFromContentScript":
