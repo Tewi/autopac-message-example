@@ -41,13 +41,21 @@ function sendTransferenciaToContentScript() {
     });
 }
 
+// request transferencia from the extension's storage
+function getTransferenciaFromContentScript() {
+    let event = document.createEvent('Event');
+    event.initEvent('transferenciaFromContentScript');
+    document.dispatchEvent(event);
+}
+
+
 function printTransferencia() {
     console.log(transferenciaOptions.toObject())
 }
 
 // add logic to the option page buttons
 document.getElementById('sendTransferenciaBtn').addEventListener('click', sendTransferenciaToContentScript);
-// document.getElementById('getTransferenciaBtn').addEventListener('click', getTransferenciaFromContentScript());
+document.getElementById('getTransferenciaBtn').addEventListener('click', getTransferenciaFromContentScript);
 document.getElementById('printTransferenciaBtn').addEventListener('click', printTransferencia);
 
 //Event Listeners
@@ -59,9 +67,10 @@ window.addEventListener("message", function(event) {
         return;
     switch (data.message) {
         case "transferenciaFromContentScript":
+            if (!data.transferencia) return;
             console.log("transferenciaFromContentScript", data);
             // assign the global variable transferencia
-            // window.transferencia = event.data.transferencia;
+            transferenciaOptions = new TransferenciaOptions(data.transferencia);
             break;
     }
 });
