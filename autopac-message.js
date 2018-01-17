@@ -17,15 +17,13 @@ const DEFAULT_TRANSFERENCIA = {
     }
 };
 
+//origin values
+const origin = {
+    name: "autopac-message-example"
+}
+
 // object that contains the data of the tranferencia 
 var transferenciaOptions = new TransferenciaOptions(DEFAULT_TRANSFERENCIA);
-
-function messageAutoPac() {
-    messageExtension("transferenciaFromPageScript", {
-        from: "messageTest",
-        transferencia: transferenciaOptions.toObject()
-    });
-}
 
 // sends message with to the document, which the content script is listening with the same idMessage
 function messageExtension(idMessage, data){
@@ -35,12 +33,36 @@ function messageExtension(idMessage, data){
     document.dispatchEvent(event);
 }
 
+// sends transferencia data to the extension
+function sendTransferenciaToContentScript() {
+    messageExtension("transferenciaFromPageScript", {
+        from: origin.name,
+        transferencia: transferenciaOptions.toObject()
+    });
+}
+
 function printTransferencia() {
     console.log(transferenciaOptions.toObject())
 }
 
 // add logic to the option page buttons
-document.getElementById('messageBtn').addEventListener('click', messageAutoPac);
-// document.getElementById('get').addEventListener('click', loadTransferenciaFromLocalStorage);
+document.getElementById('sendTransferenciaBtn').addEventListener('click', sendTransferenciaToContentScript);
+// document.getElementById('getTransferenciaBtn').addEventListener('click', getTransferenciaFromContentScript());
 document.getElementById('printTransferenciaBtn').addEventListener('click', printTransferencia);
+
+//Event Listeners
+// listens for the message that contains the transferencia data
+window.addEventListener("message", function(event) {
+    // only listen to autopac messages with data
+    let data = event.data;
+    if (data.from && data.from != "autopac" && data.message) 
+        return;
+    switch (data.message) {
+        case "transferenciaFromContentScript":
+            console.log("transferenciaFromContentScript", data);
+            // assign the global variable transferencia
+            // window.transferencia = event.data.transferencia;
+            break;
+    }
+});
 
