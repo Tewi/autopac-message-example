@@ -43,9 +43,9 @@ function sendTransferenciaToContentScript() {
 
 // request transferencia from the extension's storage
 function getTransferenciaFromContentScript() {
-    let event = document.createEvent('Event');
-    event.initEvent('transferenciaFromContentScript');
-    document.dispatchEvent(event);
+    messageExtension("transferenciaFromContentScript", {
+        from: origin.name
+    });
 }
 
 
